@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8">
+    <title>D3.js TodoMVC</title>
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <style>
+        #main {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="todoapp">
+        <header id="header">
+            <h1>todos</h1>
+            <input id="new-todo" type="text" placeholder="What needs to be done?" autofocus>
+        </header>
+        <section id="main">
+            <input id="toggle-all" type="checkbox">
+            <label for="toggle-all">Mark all as complete</label>
+
+            <ul id="todo-list"></ul>
+        </section>
+    </div>
+    <script src="/js/d3.v3.min.js"></script>
+    <script>
+        //global list of items
+        var todos = [];
+        todos.toggleMain = function(){
+            var main = document.getElementById('main');
+            var correctStyle = (this.length > 0)?'block':'none';
+            if (main.style.display !== correctStyle){
+                main.style.display = correctStyle;
+            };
+        };
+
+        //adding a new item
+        var newTodoInput = document.getElementById('new-todo');
+        newTodoInput.addEventListener('keypress', function(e){
+            var self = this;
+            if (e.keyCode === 13){
+                todos.push(new Todo({title: self.value}));
+                todos.toggleMain();
+            };
+        });
+
+        //class definition
+        function Todo(obj){
+            this.title = obj.title || '';
+            this.completed = obj.completed || false;
+        };
+    </script>
+</body>
+</html>
+
