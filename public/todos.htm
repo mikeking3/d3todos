@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" type="text/css" href="/css/base.css">
     <style>
-        #main, #footer {
+        #main, #footer, #clear-completed {
             display: none;
         }
     </style>
@@ -28,12 +28,13 @@
 
         <footer id="footer">
             <div>
-                <span id="todo-count"><strong></strong> items left.</span>
+                <span id="todo-count"><strong></strong> <span>items</span> left.</span>
                 <ul id="filters">
-                    <li class="all"><a class="selected" href="#">All</a></li>
+                    <li class="all"><a href="#">All</a></li>
                     <li class="active"><a href="#active">Active</a></li>
                     <li class="completed"><a href="#completed">Completed</a></li>
                 </ul>
+                <button id="clear-completed">Clear Completed (<span></span>)</button>
             </div>
         </footer>
     </div>
