@@ -28,6 +28,13 @@ function renderTodos(todos){
         .data(todos)
         .enter()
         .append(makeListItem);
+
+    //remove elements filtered out by user
+    d3.select('#todo-list')
+        .selectAll('li')
+        .data(todos)
+        .exit()
+        .remove();
 };
 
 function renderFooter(todos){
@@ -38,11 +45,14 @@ function renderFooter(todos){
 
     var hash = location.hash || '#';
     var links = $$('#filters a');
-    links = Array.prototype.slice.call(links, 0);
-    links.forEach(function(link){
-        //highlight the right link.  router-like function.
-        //too sleepy right now.
-    });
+    for (var i = 0; i<links.length; i++){
+        if (links[i].hash === hash ||
+            (links[i].hash === '' && hash === '#')){
+            links[i].classList.add('selected');
+        } else {
+            links[i].classList.remove('selected');
+        };
+    };
 };
 
 //rendering a new item
@@ -60,6 +70,7 @@ function makeListItem(todo){
     checkbox.classList.add('view');
     if (todo.completed){
         checkbox.checked = true;
+        li.classList.add('completed');
     };
 
     //label
@@ -86,6 +97,24 @@ function makeListItem(todo){
 
     return li;
 };
+
+//"ROUTER"
+
+window.addEventListener('hashchange', function(e){
+    if (location.hash === '#completed'){
+        renderTodos(todos.filter(function(todo){
+            return todo.completed;
+        }));
+    } else if (location.hash === '#active'){
+        renderTodos(todos.filter(function(todo){
+            return !todo.completed;
+        }));
+    } else {
+        renderTodos(todos);
+    };
+    //footer is always the same
+    renderFooter(todos);
+});
 
 //CONTROLLER
 
