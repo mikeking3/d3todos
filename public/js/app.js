@@ -38,7 +38,8 @@ function renderTodos(todos){
 };
 
 function renderFooter(todos){
-    document.querySelector('#todo-count strong').textContent = todos.length;
+    var  active = todos.filter(function(todo){return !todo.completed});
+    document.querySelector('#todo-count strong').textContent = active.length;
     document.querySelector('#todo-count span').textContent = (todos.length === 1)?'item':'items';
 
     var hash = location.hash || '#';
@@ -50,6 +51,15 @@ function renderFooter(todos){
         } else {
             links[i].classList.remove('selected');
         };
+    };
+
+    var  completed = todos.filter(function(todo){return todo.completed});
+    if (completed.length > 0){
+        var count = document.querySelector('#clear-completed span');
+        count.textContent = completed.length;
+        document.getElementById('clear-completed').style.display = 'block';
+    } else {
+        document.getElementById('clear-completed').style.display = 'none';
     };
 };
 
