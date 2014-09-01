@@ -38,13 +38,11 @@ function renderTodos(todos){
 };
 
 function renderFooter(todos){
-    var $ = document.querySelector;
-    var $$ = document.querySelectorAll;
-    $('#todo-count strong').textContent = todos.length;
-    $('#todo-count span').textContent = (todos.length === 1)?'item':'items';
+    document.querySelector('#todo-count strong').textContent = todos.length;
+    document.querySelector('#todo-count span').textContent = (todos.length === 1)?'item':'items';
 
     var hash = location.hash || '#';
-    var links = $$('#filters a');
+    var links = document.querySelectorAll('#filters a');
     for (var i = 0; i<links.length; i++){
         if (links[i].hash === hash ||
             (links[i].hash === '' && hash === '#')){
