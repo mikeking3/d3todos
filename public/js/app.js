@@ -108,6 +108,7 @@ function makeListItem(todo){
 
 //"ROUTER"
 
+//to do:  move this logic to the render function, then just re-render on hash change
 window.addEventListener('hashchange', function(e){
     if (location.hash === '#completed'){
         renderTodos(todos.filter(function(todo){
@@ -145,5 +146,25 @@ newItemInput.on('keypress', function(d, i){
     };
 });
 
+var ul = document.getElementById('todo-list');
+
+//clicking "item complete" checkbox
+ul.addEventListener('click', function(e){
+    if (e.target.type === 'checkbox'){
+        var li = e.target.parentElement.parentElement;
+        li.className = e.target.checked?'completed':'';
+
+        var title = li.__data__.title;
+
+        //update model
+        for (var i = 0; i<todos.length; i++){
+            if (todos[i].title === title){
+                todos[i].completed = e.target.checked;
+                break;
+            };
+        };
+
+    };
+});
 
 
