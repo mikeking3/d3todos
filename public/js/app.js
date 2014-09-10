@@ -20,19 +20,36 @@ function Todo(obj){
 };
 
 //VIEW-RELATED
+function renderView(){
+    renderTodos(todos);
+    renderFooter(todos);
+};
 
 function renderTodos(todos){
+    //filters based on url hash
+    var localTodos = todos.filter(getFilter());
+    console.log(todos);
+    console.log(localTodos);
+
     //insert new item into DOM
     d3.select('#todo-list')
         .selectAll('li')
-        .data(todos)
+        .data(localTodos)
         .enter()
         .append(makeListItem);
+
+    //update existing nodes
+    d3.select('#todo-list')
+        .selectAll('li')
+        .data(localTodos)
+        .classed(function(d){
+            return d.completed?'completed':'';
+        });
 
     //remove elements filtered out by user
     d3.select('#todo-list')
         .selectAll('li')
-        .data(todos)
+        .data(localTodos)
         .exit()
         .remove();
 };
@@ -81,6 +98,7 @@ function makeListItem(todo){
         li.classList.add('completed');
     };
 
+
     //label
     var label = document.createElement('label');
     label.textContent = todo.title;
@@ -107,22 +125,30 @@ function makeListItem(todo){
 };
 
 //"ROUTER"
-
-//to do:  move this logic to the render function, then just re-render on hash change
-window.addEventListener('hashchange', function(e){
+function getFilter(){
+    console.log(location.hash);
     if (location.hash === '#completed'){
-        renderTodos(todos.filter(function(todo){
+        return function(todo){
             return todo.completed;
-        }));
+        };
     } else if (location.hash === '#active'){
-        renderTodos(todos.filter(function(todo){
+        return function(todo){
             return !todo.completed;
-        }));
+        };
     } else {
-        renderTodos(todos);
+        return function(todo){
+            return true;
+        };
     };
-    //footer is always the same
-    renderFooter(todos);
+};
+
+window.addEventListener('hashchange', function(e){
+    //there was a bug where the __data__ on the list item was correct
+    //but the text in the label wasn't updating.  enter function working
+    //but doing update wrong?
+    document.getElementById('todo-list').innerHTML = '';
+
+    renderView();
 });
 
 //CONTROLLER
@@ -140,9 +166,7 @@ newItemInput.on('keypress', function(d, i){
         //show div#main if hidden
         todos.toggleVisibility();
 
-        //render the view
-        renderTodos(todos);
-        renderFooter(todos);
+        renderView();
     };
 });
 
@@ -163,7 +187,7 @@ ul.addEventListener('click', function(e){
                 break;
             };
         };
-
+        renderView();
     };
 });
 
