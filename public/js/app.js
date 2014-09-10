@@ -28,8 +28,11 @@ function renderView(){
 function renderTodos(todos){
     //filters based on url hash
     var localTodos = todos.filter(getFilter());
-    console.log(todos);
-    console.log(localTodos);
+
+    //there was a bug where the __data__ on the list item was correct
+    //but the text in the label wasn't updating.  enter function working
+    //but doing update wrong?
+    document.getElementById('todo-list').innerHTML = '';
 
     //insert new item into DOM
     d3.select('#todo-list')
@@ -126,7 +129,6 @@ function makeListItem(todo){
 
 //"ROUTER"
 function getFilter(){
-    console.log(location.hash);
     if (location.hash === '#completed'){
         return function(todo){
             return todo.completed;
@@ -143,15 +145,26 @@ function getFilter(){
 };
 
 window.addEventListener('hashchange', function(e){
-    //there was a bug where the __data__ on the list item was correct
-    //but the text in the label wasn't updating.  enter function working
-    //but doing update wrong?
-    document.getElementById('todo-list').innerHTML = '';
 
     renderView();
 });
 
 //CONTROLLER
+
+//utility function
+function parentListItem(el){
+    var li = undefined;
+    var current = el;
+    var parent = undefined;
+    while (current !== null){
+        var parent = current.parentElement;
+        if (parent && parent.tagName === 'LI'){
+            break;
+        };
+        current = parent;
+    };
+    return parent;
+};
 
 //react to new item
 var newItemInput = d3.select('#new-todo');
@@ -175,7 +188,7 @@ var ul = document.getElementById('todo-list');
 //clicking "item complete" checkbox
 ul.addEventListener('click', function(e){
     if (e.target.type === 'checkbox'){
-        var li = e.target.parentElement.parentElement;
+        var li = parentListItem(e.target);
         li.className = e.target.checked?'completed':'';
 
         var title = li.__data__.title;
@@ -191,4 +204,26 @@ ul.addEventListener('click', function(e){
     };
 });
 
+//clicking "remove item" button
+ul.addEventListener('click', function(e){
+    if (e.target.tagName === 'BUTTON' && e.target.classList.contains('destroy')){
+        var li = parentListItem(e.target);
+        var title = li.__data__.title;
 
+        var index = 0;
+        for (var i = 0; i<todos.length; i++){
+            if (todos[i].title === title){
+                index = i;
+                break;
+            };
+        };
+        todos.splice(index, 1);
+        renderView();
+    };
+});
+
+//clicking "clear completed" button
+ul.addEventListener('click', function(e){
+    if (e.target.id === 'clear-completed'){
+    };
+});
