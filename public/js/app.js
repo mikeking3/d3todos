@@ -223,6 +223,14 @@ ul.addEventListener('click', function(e){
     };
 });
 
+//double-clicking an item to edit it
+ul.addEventListener('dblclick', function(e){
+    if (e.target.tagName === 'LABEL'){
+        var li = parentListItem(e.target);
+        li.classList.add('editing');
+    };
+});
+
 //clicking "clear completed" button
 var completedButton = document.getElementById('clear-completed');
 completedButton.addEventListener('click', function(e){
