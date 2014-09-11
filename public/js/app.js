@@ -1,16 +1,8 @@
 //COLLECTION
 var todos = [];
-
-//i want the div to toggle based on whether there are any todos 
-//or not.  not sure how to accomplish this with d3 yet
-todos.toggleVisibility = function(){
-    var main = document.getElementById('main');
-    var footer = document.getElementById('footer');
-    var correctStyle = (this.length > 0)?'block':'none';
-    if (main.style.display !== correctStyle){
-        main.style.display = correctStyle;
-        footer.style.display = correctStyle;
-    };
+if (localStorage.getItem('todos')){
+    todos = JSON.parse(localStorage.getItem('todos'));
+    renderView();
 };
 
 //MODEL
@@ -21,6 +13,14 @@ function Todo(obj){
 
 //VIEW-RELATED
 function renderView(){
+    var main = document.getElementById('main');
+    var footer = document.getElementById('footer');
+    var correctStyle = (todos.length > 0)?'block':'none';
+    if (main.style.display !== correctStyle){
+        main.style.display = correctStyle;
+        footer.style.display = correctStyle;
+    };
+
     renderTodos(todos);
     renderFooter(todos);
 };
@@ -145,8 +145,12 @@ function getFilter(){
 };
 
 window.addEventListener('hashchange', function(e){
-
     renderView();
+});
+
+//navigating away from the page triggers list to be saved in localStorage
+window.addEventListener('unload', function(e){
+    localStorage.setItem('todos', JSON.stringify(todos));
 });
 
 //CONTROLLER
@@ -176,9 +180,6 @@ newItemInput.on('keypress', function(d, i){
         //prepare input field for next item
         this.value = '';
         
-        //show div#main if hidden
-        todos.toggleVisibility();
-
         renderView();
     };
 });
