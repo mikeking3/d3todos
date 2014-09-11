@@ -223,7 +223,8 @@ ul.addEventListener('click', function(e){
 });
 
 //clicking "clear completed" button
-ul.addEventListener('click', function(e){
-    if (e.target.id === 'clear-completed'){
-    };
+var completedButton = document.getElementById('clear-completed');
+completedButton.addEventListener('click', function(e){
+    todos = todos.filter(function(todo){return !todo.completed});
+    renderView();
 });
