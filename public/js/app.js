@@ -32,6 +32,7 @@ function renderTodos(todos){
     //there was a bug where the __data__ on the list item was correct
     //but the text in the label wasn't updating.  enter function working
     //but doing update wrong?
+    //this also clears event handlers
     document.getElementById('todo-list').innerHTML = '';
 
     //insert new item into DOM
@@ -73,7 +74,7 @@ function renderFooter(todos){
         };
     };
 
-    var  completed = todos.filter(function(todo){return todo.completed});
+    var completed = todos.filter(function(todo){return todo.completed});
     if (completed.length > 0){
         var count = document.querySelector('#clear-completed span');
         count.textContent = completed.length;
@@ -101,7 +102,6 @@ function makeListItem(todo){
         li.classList.add('completed');
     };
 
-
     //label
     var label = document.createElement('label');
     label.textContent = todo.title;
@@ -117,12 +117,31 @@ function makeListItem(todo){
     li.appendChild(container);
 
     //second child
-    var editButton = document.createElement('input');
-    editButton.type = 'text';
-    editButton.classList.add('edit');
-    editButton.value = todo.title;
+    var editInput = document.createElement('input');
+    editInput.type = 'text';
+    editInput.classList.add('edit');
+    editInput.value = todo.title;
+    editInput.addEventListener('keypress', function(e){
+        //escape key
+        if (e.keyCode === 27){
+            li.classList.remove('editing');
+            this.value = todo.title;
 
-    li.appendChild(editButton);
+        //enter key
+        } else if (e.keyCode === 13){ 
+            li.classList.remove('editing');
+            label.textContent = this.value;
+            for (var i = 0; i<todos.length; i++){
+                if (todos[i].title === todo.title){
+                    todos[i].title = this.value;
+                    break;
+                };
+            };
+            renderView();
+        };
+    });
+
+    li.appendChild(editInput);
 
     return li;
 };
@@ -235,5 +254,13 @@ ul.addEventListener('dblclick', function(e){
 var completedButton = document.getElementById('clear-completed');
 completedButton.addEventListener('click', function(e){
     todos = todos.filter(function(todo){return !todo.completed});
+    renderView();
+});
+
+var toggleAll = document.getElementById('toggle-all');
+toggleAll.addEventListener('click', function(e){
+    for (var i = 0; i<todos.length; i++){
+        todos[i].completed = this.checked;
+    };
     renderView();
 });
